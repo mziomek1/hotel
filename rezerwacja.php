@@ -35,7 +35,7 @@
                         <option value="5">5</option>
                         <option value="6">6</option>
                     </select><br>
-                    <label for="typ">Typ mieszkania:</label>
+                    <label for="typ">Typ mieszkania</label>
                     <select id="typ" name="typ">
                         <option value="Apartament">Apartament</option>
                         <option value="Domek">Domek</option>
@@ -53,62 +53,6 @@
             </div>
         </section>
     </main>
-    <?php
-
-    $conn = mysqli_connect("localhost", "root", "", "hotel");
-
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $liczba_osob = $_POST["ile"];
-    $typ = $_POST["typ"];
-    $data_od = $_POST["od"];
-    $data_do = $_POST["do"];
-
-    // Znalezienie odpowiedniego pokoju
-    $query = "SELECT p.numer 
-              FROM pokoje p 
-              WHERE p.typ = ? 
-              AND p.numer % 10 >= ? 
-              AND p.numer NOT IN (
-                  SELECT r.Numer FROM rezerwacje r 
-                  WHERE (r.Data_rozpoczecia <= ? AND r.Data_zakonczenia >= ?) 
-                  OR (r.Data_rozpoczecia <= ? AND r.Data_zakonczenia >= ?)
-              )
-              LIMIT 1";
-
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "sissss", $typ, $liczba_osob, $data_do, $data_od, $data_od, $data_do);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-
-    if ($row = mysqli_fetch_assoc($result)) {
-        // Pokój jest dostępny, przekierowanie do rezerwacji
-        header("Location: rezerwacja.php?pokoj=" . $row['numer']);
-        exit();
-    } else {
-        // Sprawdzenie, od kiedy najbliższy pokój będzie dostępny
-        $query = "SELECT MIN(r.Data_zakonczenia) AS dostepny_od 
-                  FROM rezerwacje r 
-                  JOIN pokoje p ON r.Numer = p.numer 
-                  WHERE p.typ = ? AND p.numer % 10 >= ?";
-        $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "si", $typ, $liczba_osob);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        $row = mysqli_fetch_assoc($result);
-
-        if ($row && $row["dostepny_od"]) {
-            echo "<p>Najbliższy wolny pokój będzie dostępny od: " . $row["dostepny_od"] . "</p>";
-        } else {
-            echo "<p>Niestety, nie ma dostępnych pokoi tego typu.</p>";
-        }
-    }
-
-    mysqli_stmt_close($stmt);
-}
-
-mysqli_close($conn);
-?>
     
     <footer>
         <div class="container">

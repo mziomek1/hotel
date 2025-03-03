@@ -156,3 +156,6 @@ footer {
 .social-icons img:hover {
     transform: scale(1.1);
 }
+#formularz{
+    text-align: center;
+}

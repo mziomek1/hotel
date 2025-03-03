@@ -16,7 +16,7 @@
         <nav>
             <ul>
                 <li><a href="hotel.php" class="przyciski">Strona Główna</a></li>
-                <li><a href="pokoje.php" class="przyciski">Kontakt oraz Rezerwacje</a></li>
+                <li><a href="logowanie.php" class="przyciski">Kontakt oraz Rezerwacje</a></li>
             </ul>
         </nav>
     </header>
